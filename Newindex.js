@@ -25,48 +25,50 @@ form.addEventListener('submit',saveinLocalStorage);
 // }
 
 
-function saveinLocalStorage(event){
+ async function saveinLocalStorage(event){
 event.preventDefault();
 const sellingPrice = event.target.Price.value;
 const productName = event.target.Product.value;
+let promise1;
 const myObj = {
     sellingPrice,
     productName
 }
-          var tempTotal = (document.getElementById('id7'));
-  axios.post("https://crudcrud.com/api/1ed98a9a546b42d0a7098d63cb7a5149/AdminPage",myObj)
-     .then((response)=>{
-        displayUser(response.data)
-        tempTotal.innerHTML = parseInt(tempTotal.innerHTML) + parseInt( response.data.sellingPrice)
-        console.log(response)
-     })
-     .catch((err)=>{
+          
+        try{
+      promise1 = await axios.post("https://crudcrud.com/api/d8159ffa02564cea9980ca785f24ed69/AdminPage",myObj)
+     
+        displayUser(promise1.data)
+        tempTotal.innerHTML =   parseInt(tempTotal.innerHTML) + parseInt( promise1.data.sellingPrice)
+        console.log(promise1)
+    
+        }catch(err){
         document.body.innerHTML = document.body.innerHTML + "<h4>Something went wrong</h4>"
         console.log(err)
-     })
+     }
+    }
         
 
-
-    }
-
+        var promise1;
        var tempTotal = (document.getElementById('id7'));
-     window.addEventListener('DOMContentLoaded',(event)=>{
-        axios.get("https://crudcrud.com/api/1ed98a9a546b42d0a7098d63cb7a5149/AdminPage")
-        .then((response)=>{
-            console.log(response)
-            for(var i=0; i<response.data.length; i++){
-                displayUser(response.data[i])
+     window.addEventListener('DOMContentLoaded',async(event)=>{
+        try{
+       promise1 = await axios.get("https://crudcrud.com/api/d8159ffa02564cea9980ca785f24ed69/AdminPage")
+        
+           // console.log(promise1)
+            for(var i=0; i<promise1.data.length; i++){
+                displayUser(promise1.data[i])
                 
                 
-                tempTotal.innerHTML = ( tempTotal.innerHTML + response.data[i].sellingPrice) 
+                tempTotal.innerHTML = parseInt( tempTotal.innerHTML )+ parseInt(promise1.data[i].sellingPrice) 
             }
 
           // tempTotal.innerHTML = parseInt(tempTotal.innerHTML)  + parseInt(response.data._id)
             
-        })
-        .catch((error)=>{
+        }
+        catch(error){
             console.log(error)
-        })
+        }
      })
 
 
@@ -79,59 +81,37 @@ function displayUser(user){
      ParentNode.innerHTML = ParentNode.innerHTML + ChildHTML;
 }
 
-function deleteUser(userId){
-   axios.get(`https://crudcrud.com/api/1ed98a9a546b42d0a7098d63cb7a5149/AdminPage/${userId}`)
-    .then((response)=>{
+ async function deleteUser(userId){
+     try{
+    var promise1 = await axios.get(`https://crudcrud.com/api/d8159ffa02564cea9980ca785f24ed69/AdminPage/${userId}`)
+    
 
-        tempTotal.innerHTML = parseInt(tempTotal.innerHTML)-parseInt(response.data.sellingPrice)
-    })
-     .catch((error)=>{
-        console.log(error)
-     })
-
-    axios.delete(`https://crudcrud.com/api/1ed98a9a546b42d0a7098d63cb7a5149/AdminPage/${userId}`)
-    .then((response)=>{
-       //tempTotal.innerHTML = parseInt(tempTotal.innerHTML) - parseInt(response.data.sellingPrice)
-        removeItemFromScreen(userId);
-        console.log(response)
-    })
-
-   
-        
-    .catch((err)=>{
-        console.log(err)
-    })
+        tempTotal.innerHTML = parseInt(tempTotal.innerHTML)-parseInt(promise1.data.sellingPrice)
+    
 }
+     catch(error){
+        console.log(error)
+     }
+      try{
+     const promise3 = await axios.delete(`https://crudcrud.com/api/d8159ffa02564cea9980ca785f24ed69/AdminPage/${userId}`)
+     
+       //tempTotal.innerHTML = parseInt(tempTotal.innerHTML) - parseInt(response.data.sellingPrice)
+        
+       // console.log(response)
+    
 
+    }      
+    catch(err){
+        console.log(err)
+    
+ }finally{   
+    removeItemFromScreen(userId);
+ }
+   
+ }
 function removeItemFromScreen(userId){
 
     const ParentNode = document.getElementById('Users')
     const elem = document.getElementById(userId)
        ParentNode.removeChild(elem)
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
